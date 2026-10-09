@@ -26,40 +26,30 @@
   main{max-width:1050px;margin:18px auto;padding:0 14px 40px}
   .notice{background:#e8fff7;border:1px solid #b2f5ea;padding:12px 14px;border-radius:14px;margin:14px 0;color:#066b5c}
   .error{background:#fff1f2;border:1px solid #fecdd3;color:#b91c1c}
-  .grid{display:grid;grid-template-columns:repeat(7,minmax(180px,1fr));gap:12px}
-  @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr)} }
+  .grid{display:grid;grid-template-columns:repeat(7,minmax(130px,1fr));gap:10px}
+  @media (max-width:1100px){ .grid{grid-template-columns:repeat(4,1fr)} }
   @media (max-width:700px){ .grid{grid-template-columns:1fr 1fr} }
   @media (max-width:520px){ .grid{grid-template-columns:1fr} }
-  .card{background:var(--card);border:1px solid #e2e8f0;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 24px -18px rgba(0,0,0,.2)}
+  .card{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;box-shadow:0 6px 24px -18px rgba(0,0,0,.2)}
   .card.ok{background:#f0fdf4;border-color:#86efac}
-  .dayline{display:flex;align-items:center;gap:10px}
-  .dirdot{width:12px;height:12px;border-radius:50%}
-  .title{font-weight:800;font-size:15px}
-  .big{font-size:26px;font-weight:900;letter-spacing:.3px}
-  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#111827}
-  .sub{color:var(--muted);font-size:13px}
-  .tag{font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe}
+  .dayline{display:flex;align-items:center;gap:8px}
+  .dirdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .title{font-weight:800;font-size:13px;white-space:nowrap}
+  .big{font-size:22px;font-weight:900;letter-spacing:.2px;line-height:1.15}
+  .gusts{font-size:13px;font-weight:600;color:var(--muted)}
+  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#111827}
+  .sub{color:var(--muted);font-size:12px}
+  .metarow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid #e2e8f0;padding-top:5px;margin-top:2px}
+  .metarow b{color:#111827}
+  .tag{font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe;white-space:nowrap}
   .tag.go{background:#dcfce7;border-color:#86efac;color:#065f46}
   .tag.light{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
-  .models{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
   .tiny{font-size:12px;color:#475569}
   footer{max-width:1050px;margin:16px auto;padding:0 14px;color:#475569}
   details.panel{margin-top:12px;background:#fff;border:1px dashed #cbd5e1;border-radius:14px;padding:10px}
   summary{cursor:pointer;font-weight:700}
-  .scorebar{height:8px;background:#f1f5f9;border-radius:999px;overflow:hidden}
+  .scorebar{height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden;min-width:40px;flex:1;max-width:80px}
   .scorebar > b{display:block;height:100%}
-  .weekbar{display:flex;gap:10px;overflow-x:auto;padding:6px 2px;margin:8px 0}
-  .weekpill{min-width:160px;background:var(--card);border:1px solid #e2e8f0;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 14px -12px rgba(0,0,0,.25)}
-  .weekpill.ok{border-color:#86efac;background:#f0fdf4}
-  .weekpill .top{display:flex;align-items:center;gap:8px;font-weight:800}
-  .weekpill .mid{font-size:18px;font-weight:900}
-  /* --- Simple weekbar threshold styling --- */
-  .weekpill.simple{min-width:120px; padding:10px 12px; gap:4px; text-align:center}
-  .weekpill.simple .wk-date{font-weight:700; font-size:14px}
-  .weekpill.simple .wk-speed{font-weight:900; font-size:20px; letter-spacing:.2px}
-  .weekpill.wk-white{background:#ffffff; border:1px solid #e2e8f0; color:#111}
-  .weekpill.wk-light{background:#dcfce7; border:1px solid #86efac; color:#065f46}
-  .weekpill.wk-dark{background:#146c43; border:1px solid #0f5132; color:#ffffff}
 
   .ctrls{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}
 </style>
@@ -90,7 +80,6 @@
   </div>
 
   <div id="todayAdvice" class="notice">Data laden…</div>
-  <div id="weekbar" class="weekbar" aria-label="Weekoverzicht (snel)"></div>
   <div class="grid" id="days"></div>
 
   <details class="panel">
@@ -348,7 +337,6 @@ function renderCards(cards){
     div.style.borderLeft = `10px solid ${col}`;
   }
 
-  const weekbar = document.getElementById("weekbar"); weekbar.innerHTML="";
   const grid = document.getElementById("days"); grid.innerHTML="";
   next7.forEach(c=>{
     const b = c.best;
@@ -357,36 +345,26 @@ function renderCards(cards){
     const go = b.spdAvg >= STATE.threshold;
     const relw = Math.max(4, Math.min(100, c.rel));
 
-    const pill = document.createElement("div");
-    pill.className = "weekpill" + (go ? " ok" : "");
-    pill.innerHTML = `
-      <div class="top"><span class="dirdot" style="background:${col}"></span>${niceDateLabel(c.date)}</div>
-      <div class="mid">${b.spdAvg.toFixed(1)} kn • <b>${word}</b></div>
-      <div class="tiny"><b>${hhmm(b.t)}</b></div>
-      <span class="tag ${go?'go':'light'}">${go?'GA SURFEN':'TE LICHT'}</span>
-    `;
-    weekbar.appendChild(pill);
-
     const card = document.createElement("div");
     card.className = "card" + (go ? " ok" : "");
     card.innerHTML = `
       <div class="dayline">
         <span class="dirdot" style="background:${col}"></span>
         <div class="title">${niceDateLabel(c.date)}</div>
-        <div class="spacer"></div>
+        <div class="spacer" style="flex:1"></div>
         <span class="tag ${go?'go':'light'}">${go?'GA SURFEN':'TE LICHT'}</span>
       </div>
-
-      <div class="big">${b.spdAvg.toFixed(1)} kn • <b>${word}</b> <span class="sub">(${b.gstAvg.toFixed(1)} vlagen)</span></div>
-      <div class="row"><b>${hhmm(b.t)}</b></div>
-
-      <div class="row sub">Vlagerigheid: <b>${c.gustScore}/10</b></div>
-      <div class="row sub" style="gap:6px;align-items:center">
-        Betrouwbaarheid:
-        <span style="width:100%;max-width:180px" class="scorebar"><b style="width:${relw}% ; background:${col}"></b></span>
+      <div class="big">${b.spdAvg.toFixed(1)} kn • <b>${word}</b></div>
+      <div class="gusts">▲ ${b.gstAvg.toFixed(1)} kn vlagen</div>
+      <div class="metarow">
+        <b>${hhmm(b.t)}</b>
+        <span>·</span>
+        <span>Vlag: <b>${c.gustScore}/10</b></span>
+        <span>·</span>
+        <span class="scorebar"><b style="width:${relw}%;background:${col}"></b></span>
         <b>${c.rel}%</b>
       </div>
-      `;
+    `;
     grid.appendChild(card);
   });
 }
