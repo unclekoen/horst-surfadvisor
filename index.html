@@ -30,25 +30,24 @@
   @media (max-width:1100px){ .grid{grid-template-columns:repeat(4,1fr)} }
   @media (max-width:700px){ .grid{grid-template-columns:1fr 1fr} }
   @media (max-width:520px){ .grid{grid-template-columns:1fr} }
-  .card{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:5px;box-shadow:0 6px 24px -18px rgba(0,0,0,.2)}
+  .card{background:var(--card);border:1px solid #e2e8f0;border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 24px -18px rgba(0,0,0,.2)}
   .card.ok{background:#f0fdf4;border-color:#86efac}
   .dayline{display:flex;align-items:center;gap:8px}
   .dirdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-  .title{font-weight:800;font-size:13px;white-space:nowrap}
-  .big{font-size:22px;font-weight:900;letter-spacing:.2px;line-height:1.15}
-  .gusts{font-size:13px;font-weight:600;color:var(--muted)}
-  .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#111827}
-  .sub{color:var(--muted);font-size:12px}
-  .metarow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid #e2e8f0;padding-top:5px;margin-top:2px}
-  .metarow b{color:#111827}
-  .tag{font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe;white-space:nowrap}
+  .title{font-weight:800;font-size:13px}
+  .big{font-size:22px;font-weight:900;letter-spacing:.2px;line-height:1.2}
+  .cardrow{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .cardrow b{color:#111827}
+  .cardlabel{min-width:90px;color:var(--muted)}
+  .rel-row{flex-wrap:nowrap}
+  .tag{font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe;white-space:nowrap;align-self:flex-start}
   .tag.go{background:#dcfce7;border-color:#86efac;color:#065f46}
   .tag.light{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
   .tiny{font-size:12px;color:#475569}
   footer{max-width:1050px;margin:16px auto;padding:0 14px;color:#475569}
   details.panel{margin-top:12px;background:#fff;border:1px dashed #cbd5e1;border-radius:14px;padding:10px}
   summary{cursor:pointer;font-weight:700}
-  .scorebar{height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden;min-width:40px;flex:1;max-width:80px}
+  .scorebar{height:6px;background:#f1f5f9;border-radius:999px;overflow:hidden;flex:1;max-width:70px;min-width:30px}
   .scorebar > b{display:block;height:100%}
 
   .ctrls{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}
@@ -351,16 +350,14 @@ function renderCards(cards){
       <div class="dayline">
         <span class="dirdot" style="background:${col}"></span>
         <div class="title">${niceDateLabel(c.date)}</div>
-        <div class="spacer" style="flex:1"></div>
-        <span class="tag ${go?'go':'light'}">${go?'GA SURFEN':'TE LICHT'}</span>
       </div>
+      <span class="tag ${go?'go':'light'}">${go?'GA SURFEN ✅':'TE LICHT ⛔'}</span>
       <div class="big">${b.spdAvg.toFixed(1)} kn • <b>${word}</b></div>
-      <div class="gusts">▲ ${b.gstAvg.toFixed(1)} kn vlagen</div>
-      <div class="metarow">
-        <b>${hhmm(b.t)}</b>
-        <span>·</span>
-        <span>Vlag: <b>${c.gustScore}/10</b></span>
-        <span>·</span>
+      <div class="cardrow">${b.gstAvg.toFixed(1)} kn vlagen</div>
+      <div class="cardrow"><span class="cardlabel">Beste tijd</span> <b>${hhmm(b.t)}</b></div>
+      <div class="cardrow"><span class="cardlabel">Vlagerigheid</span> <b>${c.gustScore}/10</b></div>
+      <div class="cardrow rel-row">
+        <span class="cardlabel">Betrouwbaarheid</span>
         <span class="scorebar"><b style="width:${relw}%;background:${col}"></b></span>
         <b>${c.rel}%</b>
       </div>
