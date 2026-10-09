@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import json, sys, time, urllib.request, urllib.parse, datetime, math
 
-LAT, LON = 52.623, 5.783  # Schokkerhaven
+#LAT, LON = 52.623, 5.783  # Schokkerhaven
+LAT, LON = 52.331, 5.571  # Strand Horst
 TZ = "Europe/Amsterdam"
 FORECAST_DAYS = 7
 MODELS = [
