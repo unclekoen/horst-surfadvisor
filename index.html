@@ -48,19 +48,6 @@
   summary{cursor:pointer;font-weight:700}
   .scorebar{height:8px;background:#f1f5f9;border-radius:999px;overflow:hidden}
   .scorebar > b{display:block;height:100%}
-  .weekbar{display:flex;gap:10px;overflow-x:auto;padding:6px 2px;margin:8px 0}
-  .weekpill{min-width:160px;background:var(--card);border:1px solid #e2e8f0;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 14px -12px rgba(0,0,0,.25)}
-  .weekpill.ok{border-color:#86efac;background:#f0fdf4}
-  .weekpill .top{display:flex;align-items:center;gap:8px;font-weight:800}
-  .weekpill .mid{font-size:18px;font-weight:900}
-  /* --- Simple weekbar threshold styling --- */
-  .weekpill.simple{min-width:120px; padding:10px 12px; gap:4px; text-align:center}
-  .weekpill.simple .wk-date{font-weight:700; font-size:14px}
-  .weekpill.simple .wk-speed{font-weight:900; font-size:20px; letter-spacing:.2px}
-  .weekpill.wk-white{background:#ffffff; border:1px solid #e2e8f0; color:#111}
-  .weekpill.wk-light{background:#dcfce7; border:1px solid #86efac; color:#065f46}
-  .weekpill.wk-dark{background:#146c43; border:1px solid #0f5132; color:#ffffff}
-
   .ctrls{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}
 </style>
 </head>
@@ -90,7 +77,6 @@
   </div>
 
   <div id="todayAdvice" class="notice">Data laden…</div>
-  <div id="weekbar" class="weekbar" aria-label="Weekoverzicht (snel)"></div>
   <div class="grid" id="days"></div>
 
   <details class="panel">
@@ -348,7 +334,6 @@ function renderCards(cards){
     div.style.borderLeft = `10px solid ${col}`;
   }
 
-  const weekbar = document.getElementById("weekbar"); weekbar.innerHTML="";
   const grid = document.getElementById("days"); grid.innerHTML="";
   next7.forEach(c=>{
     const b = c.best;
@@ -356,16 +341,6 @@ function renderCards(cards){
     const col = colorForDir(b.dirAvg ?? 0);
     const go = b.spdAvg >= STATE.threshold;
     const relw = Math.max(4, Math.min(100, c.rel));
-
-    const pill = document.createElement("div");
-    pill.className = "weekpill" + (go ? " ok" : "");
-    pill.innerHTML = `
-      <div class="top"><span class="dirdot" style="background:${col}"></span>${niceDateLabel(c.date)}</div>
-      <div class="mid">${b.spdAvg.toFixed(1)} kn • <b>${word}</b></div>
-      <div class="tiny"><b>${hhmm(b.t)}</b></div>
-      <span class="tag ${go?'go':'light'}">${go?'GA SURFEN':'TE LICHT'}</span>
-    `;
-    weekbar.appendChild(pill);
 
     const card = document.createElement("div");
     card.className = "card" + (go ? " ok" : "");
