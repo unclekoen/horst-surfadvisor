@@ -49,6 +49,32 @@
   .scorebar{height:8px;background:#f1f5f9;border-radius:999px;overflow:hidden}
   .scorebar > b{display:block;height:100%}
   .ctrls{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}
+  /* Styling voor de richtingentabel */
+  .dir-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 12px;
+  }
+  .dir-table th, .dir-table td {
+    padding: 2px 2px;
+    text-align: left;
+    vertical-align: top;
+    /*border-bottom: 1px solid #f1f5f9; /* Subtiel scheidingslijntje, kun je weglaten als je liever helemaal geen lijntjes wilt */
+  }
+  .dir-table th {
+    font-weight: 700;
+    color: var(--muted);
+    border-bottom: 2px solid #cbd5e1;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -79,16 +105,80 @@
   <div id="todayAdvice" class="notice">Data laden…</div>
   <div class="grid" id="days"></div>
 
-  <details class="panel">
-    <summary>Uitleg & modelkeuze</summary>
-    <div class="tiny" style="margin-top:8px;line-height:1.5">
-      • **Werkwijze (automatisch):** eerst wordt live geprobeerd via <b>Open‑Meteo</b> (GFS, DWD ICON, ECMWF IFS, Météo‑France AROME/ARPEGE, KNMI Harmonie eerste ~60u). Lukt dat niet, dan leest de site <b>fallback.json</b>. Als dat ook ontbreekt, tonen we demo‑data.<br/>
-      • Alles in <b>knopen</b>. Advies vanaf <b>15 kn</b> (≥ 6,5). Betrouwbaarheid = lage spreiding tussen modellen.<br/>
-      • Vlargerigheidsscore 1–10 (10 = stabiele wind). Richtingskleuren: N=rood, NO/NW=oranje, Z(+ZO/ZW)=lichtgroen, O/W=donkergroen.<br/>
-      <b>Gebruikte bron(nen) deze sessie:</b> <span id="usedSources">laden…</span><br/>
-      <b>Gebruikte modellen:</b> <span id="usedModels">laden…</span>
-    </div>
-  </details>
+<details class="panel">
+  <summary>Uitleg &amp; modelkeuze</summary>
+  <div class="tiny" style="margin-top:8px;line-height:1.5">
+    • <b>Werkwijze (automatisch):</b> eerst wordt live geprobeerd via <b>Open‑Meteo</b> (GFS, DWD ICON, ECMWF IFS, Météo‑France AROME/ARPEGE, KNMI Harmonie eerste ~60u). Lukt dat niet, dan leest de site <b>fallback.json</b>. Als dat ook ontbreekt, tonen we demo‑data.<br/>
+    • Alles in <b>knopen</b>. Advies vanaf <b>15 kn</b> (≥ 6,5). Betrouwbaarheid = lage spreiding tussen modellen.<br/>
+    • Vlargerigheidsscore 1–10 (10 = stabiele wind).<br/><br/>
+
+    <b>Richtingskleuren &amp; Kwalificatie:</b>
+    <table class="dir-table">
+      <thead>
+        <tr>
+          <th>Richting</th>
+          <th>Kleur</th>
+          <th>Kwaliteit</th>
+          <th>Omschrijving</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>ZW</b></td>
+          <td><span class="badge" style="background:var(--green-dark);color:#fff">Donkergroen</span></td>
+          <td>Perfect</td>
+          <td>De absolute toprichting. Wind waait evenwijdig/schuin langs de dijk van Harderwijk/A28. Biedt supervlak water achter de dijk (ideaal voor speed en freeride) en constante wind.</td>
+        </tr>
+        <tr>
+          <td><b>W</b></td>
+          <td><span class="badge" style="background:var(--green-light);color:#fff">Groen</span></td>
+          <td>Goed</td>
+          <td>Sideshore tot licht aanlandig. Waait goed door, al kan de kant bij het opstappen wat lastige klotsgolfjes hebben. Eenmaal op het water uitstekend.</td>
+        </tr>
+        <tr>
+          <td><b>NW</b></td>
+          <td><span class="badge" style="background:var(--green-light);color:#fff">Groen</span></td>
+          <td>Goed</td>
+          <td>Dé richting voor lange rakken. Je vaart diagonaal over de gehele breedte van het Wolderwijd richting Zeewolde. Zeer constante wind over de open wateroppervlakte.</td>
+        </tr>
+        <tr>
+          <td><b>N</b></td>
+          <td><span class="badge" style="background:var(--orange);color:#fff">Oranje</span></td>
+          <td>Matig</td>
+          <td>Aanlandig / recht op het strand. Je vaart recht van de kant af en eronder. Het opstappen kan lastig zijn door golfslag tegen de oever, en het is opletten met de ondieptes dicht bij het strand.</td>
+        </tr>
+        <tr>
+          <td><b>NO</b></td>
+          <td><span class="badge" style="background:var(--orange);color:#fff">Oranje</span></td>
+          <td>Matig</td>
+          <td>Schuin aanlandig/aflandig afhankelijk van je exacte hoek. De wind komt deels over het land bij Harderwijk. Kan prima varen zijn op het open water, maar is minder constant dan ZW.</td>
+        </tr>
+        <tr>
+          <td><b>Z</b></td>
+          <td><span class="badge" style="background:var(--orange);color:#fff">Oranje</span></td>
+          <td>Matig</td>
+          <td>Aflandig/schuin aflandig vanaf de vaste wal. De wind moet over de snelweg, bomen en gebouwen. Daardoor vaak erg vlagerig vlak bij de kant, al wordt het verderop het water beter.</td>
+        </tr>
+        <tr>
+          <td><b>O</b></td>
+          <td><span class="badge" style="background:var(--red);color:#fff">Rood</span></td>
+          <td>Slecht</td>
+          <td>Volledig aflandig vanaf de vaste wal. De wind is extreem onberekenbaar en vlagerig dicht bij de kant. Niet aan te raden tenzij je ver het water op gaat, maar wegvaren en terugkomen is matig.</td>
+        </tr>
+        <tr>
+          <td><b>ZO</b></td>
+          <td><span class="badge" style="background:var(--red);color:#fff">Rood</span></td>
+          <td>Slecht</td>
+          <td>Recht van de vaste wal (aflandig). Zeer vlagerig, valvlagen achter de bomenrij/geluidswallen van de A28 en grote windgaten bij het wegvaren.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br/>
+    <b>Gebruikte bron(nen) deze sessie:</b> <span id="usedSources">laden…</span><br/>
+    <b>Gebruikte modellen:</b> <span id="usedModels">laden…</span>
+  </div>
+</details>
 
   <details class="panel">
     <summary>Diagnose</summary>
@@ -124,10 +214,10 @@ function dirToWord(d){
 }
 function colorForDir(d){
   const w = dirToWord(d);
-  if(w==="N") return "var(--red)";
-  if(w==="NO"||w==="NW") return "var(--orange)";
-  if(w==="Z"||w==="ZO"||w==="ZW") return "var(--green-light)";
-  if(w==="O"||w==="W") return "var(--green-dark)";
+  if(w==="O"||w==="ZO") return "var(--red)";
+  if(w==="N"||w==="NO"||w==="Z") return "var(--orange)";
+  if(w==="W"||w==="NW") return "var(--green-light)";
+  if(w==="ZW") return "var(--green-dark)";
   return (d>135&&d<225) ? "var(--green-light)" : "var(--green-dark)";
 }
 function gustinessScore(gdiff){ const s = Math.max(1, Math.min(10, 10 - (gdiff/1.8))); return Math.round(s*10)/10; }
