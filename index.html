@@ -49,32 +49,11 @@
   .scorebar{height:8px;background:#f1f5f9;border-radius:999px;overflow:hidden}
   .scorebar > b{display:block;height:100%}
   .ctrls{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0;padding:10px;background:#fff;border:1px solid #e2e8f0;border-radius:14px}
-  /* Styling voor de richtingentabel */
-  .dir-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    font-size: 12px;
-  }
-  .dir-table th, .dir-table td {
-    padding: 2px 2px;
-    text-align: left;
-    vertical-align: top;
-    /*border-bottom: 1px solid #f1f5f9; /* Subtiel scheidingslijntje, kun je weglaten als je liever helemaal geen lijntjes wilt */
-  }
-  .dir-table th {
-    font-weight: 700;
-    color: var(--muted);
-    border-bottom: 2px solid #cbd5e1;
-  }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 11px;
-    white-space: nowrap;
-  }
+  /* Styling voor de richtingentabel in Uitleg & modelkeuze*/
+  .dir-table {width: 100%;border-collapse: collapse;margin-top: 8px;font-size: 12px;}
+  .dir-table th, .dir-table td {padding: 2px 2px;text-align: left;vertical-align: top;}
+  .dir-table th {font-weight: 700;color: var(--muted);border-bottom: 2px solid #cbd5e1;}
+  .badge {display: inline-block;padding: 2px 8px;border-radius: 6px;font-weight: bold;font-size: 11px;white-space: nowrap;}
 </style>
 </head>
 <body>
@@ -110,7 +89,9 @@
   <div class="tiny" style="margin-top:8px;line-height:1.5">
     • <b>Werkwijze (automatisch):</b> eerst wordt live geprobeerd via <b>Open‑Meteo</b> (GFS, DWD ICON, ECMWF IFS, Météo‑France AROME/ARPEGE, KNMI Harmonie eerste ~60u). Lukt dat niet, dan leest de site <b>fallback.json</b>. Als dat ook ontbreekt, tonen we demo‑data.<br/>
     • Alles in <b>knopen</b>. Advies vanaf <b>15 kn</b> (≥ 6,5). Betrouwbaarheid = lage spreiding tussen modellen.<br/>
-    • Vlargerigheidsscore 1–10 (10 = stabiele wind).<br/><br/>
+    • Vlargerigheidsscore 1–10 (10 = stabiele wind).<br/>
+    • Gebruikte <b>bron(nen)</b> deze sessie: <span id="usedSources">laden…</span><br/>
+    • Gebruikte <b>modellen:</b> <span id="usedModels">laden…</span><br/><br/>
 
     <b>Richtingskleuren &amp; Kwalificatie:</b>
     <table class="dir-table">
@@ -173,10 +154,6 @@
         </tr>
       </tbody>
     </table>
-
-    <br/>
-    <b>Gebruikte bron(nen) deze sessie:</b> <span id="usedSources">laden…</span><br/>
-    <b>Gebruikte modellen:</b> <span id="usedModels">laden…</span>
   </div>
 </details>
 
@@ -443,7 +420,7 @@ function renderCards(cards){
       </div>
 
       <div class="big">${b.spdAvg.toFixed(1)} kn • <b>${word}</b> <span class="sub">(${b.gstAvg.toFixed(1)} vlagen)</span></div>
-      <div class="row"><b>${hhmm(b.t)}</b></div>
+      <div class="row sub">Beste tijd: <b>${hhmm(b.t)}</b></div>
 
       <div class="row sub">Vlagerigheid: <b>${c.gustScore}/10</b></div>
       <div class="row sub" style="gap:6px;align-items:center">
