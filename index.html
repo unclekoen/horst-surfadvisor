@@ -24,8 +24,17 @@
   .btn:hover{border-color:#9ca3af}
   .btn.primary{background:var(--accent);color:#fff;border:none}
   main{max-width:1050px;margin:18px auto;padding:0 14px 40px}
-  .notice{background:#e8fff7;border:1px solid #b2f5ea;padding:12px 14px;border-radius:14px;margin:14px 0;color:#066b5c}
+  .notice{background:#e8fff7;border:1px solid #b2f5ea;padding:12px 14px;border-radius:14px;margin:14px 0;color:#066b5c;transition:background .25s,border-color .25s,box-shadow .25s}
   .error{background:#fff1f2;border:1px solid #fecdd3;color:#b91c1c}
+  /* Dynamisch, opvallend groen advies: richting GOED/PERFECT én genoeg wind.
+     Deelt dezelfde logica als windmeting.php (.swa-advice.go-great). */
+  .notice.go-great{
+    background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+    border-color:#22c55e;color:#065f46;
+    box-shadow:0 0 0 1px rgba(34,197,94,.35),0 10px 30px -12px rgba(34,197,94,.6);
+  }
+  /* Het 'GA SURFEN'-label springt er extra uit binnen een groen advies. */
+  .notice.go-great .tag.go{background:#16a34a;border-color:#16a34a;color:#f0fdf4;box-shadow:0 2px 10px -2px rgba(34,197,94,.7)}
   .grid{display:grid;grid-template-columns:repeat(7,minmax(180px,1fr));gap:12px}
   @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr)} }
   @media (max-width:700px){ .grid{grid-template-columns:1fr 1fr} }
@@ -189,13 +198,22 @@ function dirToWord(d){
   const idx = Math.round(d/45)%8;
   return names[idx];
 }
-function colorForDir(d){
+// Kwaliteit van de windrichting voor Strand Horst.
+// perfect = ZW, good = W/NW, matig = N/NO/Z, slecht = O/ZO.
+function dirQuality(d){
   const w = dirToWord(d);
-  if(w==="O"||w==="ZO") return "var(--red)";
-  if(w==="N"||w==="NO"||w==="Z") return "var(--orange)";
-  if(w==="W"||w==="NW") return "var(--green-light)";
-  if(w==="ZW") return "var(--green-dark)";
-  return (d>135&&d<225) ? "var(--green-light)" : "var(--green-dark)";
+  if(w==="ZW") return "perfect";
+  if(w==="W"||w==="NW") return "good";
+  if(w==="O"||w==="ZO") return "slecht";
+  return "matig";
+}
+function colorForDir(d){
+  switch(dirQuality(d)){
+    case "perfect": return "var(--green-dark)";
+    case "good":    return "var(--green-light)";
+    case "slecht":  return "var(--red)";
+    default:        return "var(--orange)";
+  }
 }
 function gustinessScore(gdiff){ const s = Math.max(1, Math.min(10, 10 - (gdiff/1.8))); return Math.round(s*10)/10; }
 function reliabilityPct(stdev){ const p = Math.max(0, 100 - (stdev*20)); return Math.round(p); }
@@ -386,6 +404,10 @@ function renderCards(cards){
     const col = colorForDir(b.dirAvg ?? 0);
     const word = dirToWord(b.dirAvg ?? 0);
     const go = b.spdAvg >= STATE.threshold;
+    // Alleen écht groen oplichten als de richting goed/perfect is én
+    // de minimale knopen gehaald worden.
+    const quality = dirQuality(b.dirAvg ?? 0);
+    const great = go && (quality === "good" || quality === "perfect");
     const advice = `
       <b>Advies voor vandaag (${niceDateLabel(todayCard.date)}):</b><br>
       Beste tijdstip <b>${hhmm(b.t)}</b> • Wind <b>${b.spdAvg.toFixed(1)} kn</b> • <b>${word}</b> (vlagen ${b.gstAvg.toFixed(1)} kn)
@@ -397,7 +419,7 @@ function renderCards(cards){
     `;
     const div = document.getElementById("todayAdvice");
     div.innerHTML = advice;
-    div.className = "notice " + (go ? "go" : "");
+    div.className = "notice " + (go ? "go" : "") + (great ? " go-great" : "");
     div.style.borderLeft = `10px solid ${col}`;
   }
 
